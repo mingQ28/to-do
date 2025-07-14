@@ -14,12 +14,13 @@ const TodoForm = ({ actionTitle, buttonText, onAction, onClose, todo }) => {
 
     const todoActionHandler = () => {
         const updateTodo = {
-            id: todo.id,
             title: title,
             summary,
             category,
             startDate: format(startDate, 'yyyy-MM-dd'),
         }
+        if(!isNewTodoForm)
+            updateTodo.id = todo.id
 
         onAction(updateTodo);
 
