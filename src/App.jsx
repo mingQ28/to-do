@@ -3,6 +3,7 @@
 import TodoBody from "./components/todos/TodoBody"
 import TodoHeader from "./components/todos/TodoHeader"
 import DefaultLayout from "./layouts/DefaultLayout"
+import { useState } from "react"
 
 // 서버에서 받아온 데이터라고 가정
 const dummyTodos = [
@@ -28,6 +29,34 @@ const dummyTodos = [
 
 // 해당 컴포넌트의 파일명은 App.jsx(js)로 만듦
 function App() {
+  // dummyTodos를 Apps.jsx가 관리하는 하나의상태로 등록
+  // 렌더링을 다시 하려면 상태가 변해야 하니깐 상태로 등록
+  const [todos, setTodos] = useState(dummyTodos); // 초기값은 dummyTodos
+
+  // todoform으로부터 전달받은 할일 객체를 가지고 todos 배열의 뒤쪽에 추가하는 로직
+  const addTodoHandler = (todo) => {
+    const newTodo = {
+      id: self.crypto.randomUUID(),
+      ...todo
+    }
+    // todo.id = todos.length + 1;
+    setTodos([...todos, newTodo]); // ...은 spread 문법으로 객체?를 풀어해친다는 뜻, 기본배열을 해치지 않고 새로운 배열을 만듦, 불변성 굳
+
+    // 이 경우 todos에는 제대로 푸쉬가 되지만 화면에 바로 출력되지 않음
+    // => 리렌더링이 안돼서
+    // => 왜? 
+    // setTodos라는 setter는 주소값이 바껴야 인식한다.
+    // todos는 상수, 배열(참조형 객체)
+    // newTodos = todos는 복사이기 때문에 주소값이 안바뀜
+    // setTodos가 실행되지 않으므로 렌더링안됨
+    // => 그래서 새로운 객체로 만들어야 됨
+    
+    // todo.push(todo)
+    // const newTodos = todos
+    // setTodos(newTodos)
+
+  }
+
 
   return (
       <DefaultLayout>
@@ -39,11 +68,11 @@ function App() {
         </header>
 
         <section className='max-w-xl m-4 mx-auto'>
-          <TodoHeader />
+          <TodoHeader onAdd={addTodoHandler}/>
 
           {/* 할일 목록 */}
           {/* dummyTodos라는 데이터를 todos라는 이름으로 전달 */}
-          <TodoBody todos={dummyTodos}/>
+          <TodoBody todos={todos}/>
         </section>
       </DefaultLayout>
   )

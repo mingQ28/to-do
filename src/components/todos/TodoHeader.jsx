@@ -4,7 +4,7 @@ import TodoForm from './TodoForm';
 import Modal from '@/components/ui/Modal'
 import { createPortal } from 'react-dom';
 
-const TodoHeader = () => {
+const TodoHeader = ({onAdd}) => {
   // 모달의 열기닫기 여부를 관리하는 상태값
   const [openModal, open] = useState(false);
 
@@ -18,7 +18,7 @@ const TodoHeader = () => {
     {/* modal 이 생성되는 위치 */}
     {openModal && createPortal(
       <Modal onClose={()=>open(false)}> 
-        <TodoForm onClose={()=>open(false)}/>
+        <TodoForm onAdd={onAdd} onClose={()=>open(false)}/>
       </Modal>, document.body
       // onClose이라는 이름의 props로 open함수를 전달
     )}
