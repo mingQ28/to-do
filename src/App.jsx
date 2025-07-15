@@ -30,6 +30,7 @@ const dummyTodos = [
 function App() {
 
   const [todos, setTodos] = useState(dummyTodos);
+  const [selectedCategory, setFilter] = useState('ALL');
   console.log(todos);
 
   // 1. 할일 등록 기능
@@ -74,6 +75,14 @@ function App() {
     setTodos(updateTodos)
   }
 
+  // 필터링 후에 렌더링
+    const filterTodos = 
+        () => selectedCategory === 'ALL' ?
+                          todos : todos.filter(
+                                    todo => todo.category === selectedCategory);
+
+  // 필터링 된 할일 목록 데이터
+  const filteredTodos = filterTodos();
 
 
   return (
@@ -82,11 +91,11 @@ function App() {
                 <h1 className='pt-8 mx-auto text-red-200 max-w-max text-7xl'>
                   <img className='ml-4' src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Thought%20Balloon.png" alt="Thought Balloon" width="75" height="75" />
                   <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Seal.png" alt="Seal" width="75" height="75" />
-                  </h1>
+                </h1>
           </header>
           <section className='max-w-xl m-4 mx-auto'>
-            <TodoHeader onAdd={addTodoHandler}/>
-            <TodoBody todos={todos} onUpdate={updateTodoHandler} onDelete={deleteTodoHandler}/>
+            <TodoHeader onAdd={addTodoHandler} category={()=>selectedCategory(category)} onFilter={setFilter}/>
+            <TodoBody todos={filteredTodos} onUpdate={updateTodoHandler} onDelete={deleteTodoHandler}/>
           </section>
         </DefaultLayout>
   )
