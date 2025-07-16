@@ -1,28 +1,32 @@
 import { TODO_CATEGORY_ICON } from '@/constants/icon'
 import { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
-import { format } from 'date-fns'
-const TodoForm = ({ actionTitle, buttonText, onAction, onClose, todo }) => {
+import { useTodosDispatch } from '../../contexts/TodoContext';
+const TodoForm = ({ actionTitle, buttonText, onClose, todo }) => {
     // 할일 등록 폼인지, 수정 폼인지 구분하기 위한 함수
     const isNewTodoForm = actionTitle.startsWith('등록') ? true : false;
 
     const [title, setTitle] = useState(isNewTodoForm ? '' : todo.title);
     const [summary, setSummary] = useState(isNewTodoForm ? '' : todo.summary);
     const [category, setCategory] = useState(isNewTodoForm ? 'TODO' : todo.category);
-    const [startDate, setStartDate] = useState(isNewTodoForm ? new Date() : todo.startDate);
+
+    // useTodosDispatch()를 통해 dispatch 함수 불러오기
+    const dispatch = useTodosDispatch();
 
     const todoActionHandler = () => {
         const updateTodo = {
             title: title,
             summary,
-            category,
-            startDate: format(startDate, 'yyyy-MM-dd'),
+            category
         }
-        if(!isNewTodoForm)
-            updateTodo.id = todo.id
 
-        onAction(updateTodo);
+        if (!isNewTodoForm) { // 업데이트 로직일 경우,
+            updateTodo.id = todo.id;
+            dispatch({ type: 'UPDATE', updateTodo: { id: todo.id, title, summary, category } });
+            
+        } else { // 할일 추가 로직일 경우,
+            dispatch({ type: 'ADD', 
+                newTodo: { id: self.crypto.randomUUID(), title, summary, category } });
+        }
 
         onClose();
     }
@@ -58,16 +62,6 @@ const TodoForm = ({ actionTitle, buttonText, onAction, onClose, todo }) => {
                         <option value='PROGRESS'>{TODO_CATEGORY_ICON.PROGRESS} On progress</option>
                         <option value='DONE'>{TODO_CATEGORY_ICON.DONE} Done</option>
                     </select>
-                </div>
-                <div>
-                    <label className='block mb-2 text-xl text-white' htmlFor='startDate'>Deadline</label>
-                    <DatePicker
-                    selected={startDate}
-                    onChange={(date)=>setStartDate(date)}
-                    minDate={new Date()}
-                    dateFormat="yyyy-MM-dd"
-                    className='w-full p-2 border-[1px] border-gray-300 bg-gray-200 text-gray-900 rounded'
-                    />
                 </div>
 
                 <div className='flex justify-end gap-4'>

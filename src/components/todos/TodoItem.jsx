@@ -4,10 +4,14 @@ import IconButton from '../ui/IconButton';
 import { createPortal } from 'react-dom';
 import Modal from '@/components/ui/Modal'
 import TodoForm from './TodoForm'
+import { useTodosDispatch } from '../../contexts/TodoContext';
 
-const TodoItem = ({ todo, onUpdate, onDelete }) => {
+const TodoItem = ({todo}) => {
 
   const [openModal, open] = useState(false);
+
+  // 상태를 변경할 함수를 불러오기
+  const dispatch = useTodosDispatch();
   
   return (
     <li className="flex gap-4 justify-between my-4 py-4 px-4 border-[1px] bg-gray-700 rounded-md shadow-xl">
@@ -16,13 +20,12 @@ const TodoItem = ({ todo, onUpdate, onDelete }) => {
             <div>
                 <h2 data-test="title" className="mb-0 text-lg font-bold text-gray-100 uppercase">{ todo.title }</h2>
                 <p className="mt-2 text-base text-gray-200">{ todo.summary }</p>
-                <p className="mt-1 text-gray-200 text-sm">Deadline: { todo.startDate }</p>
             </div>
         </div>
         <div className="flex items-center gap-1">
             {/* IconButton은 커스텀 컴포넌트이기 때문에 onClick만 쓸 경우, 이벤트명이아닌 props 이름으로 인식함*/}
             <IconButton onClick={() => open(true)} icon={'✏️'}/>
-            <IconButton onClick={() => onDelete(todo.id)} icon={'🗑'} />
+            <IconButton onClick={() => dispatch({type: 'DELETE', id: todo.id})} icon={'🗑'} />
         </div>
         {openModal && createPortal(
           <Modal onClose={() => open(false)}>
